@@ -92,26 +92,17 @@ class InferKandinskyImg2img(dataprocess.C2dImageTask):
         # This is handled by the main progress bar of Ikomia Studio
         return 1
 
-    def convert_and_resize_img(self, scr_image, input_width, input_height):
+    def convert_and_resize_img(self, scr_image, input_height, input_width):
         img = Image.fromarray(scr_image)
-        # Original dimensions
-        orig_width, orig_height = img.size
-
-        # Determine which dimension (width or height) is the limiting factor
-        if input_width / orig_width < input_height / orig_height:
-            # Width is the limiting factor
-            new_width = input_width
-            new_height = int(orig_height * (input_width / orig_width))
-        else:
-            # Height is the limiting factor
-            new_height = input_height
-            new_width = int(orig_width * (input_height / orig_height))
+        # Stride of 128
+        new_width = 128 * (input_width // 128)
+        new_height = 128 * (input_height // 128)
 
         # Resize the image
         resized_img = img.resize((new_width, new_height), Image.LANCZOS)
 
-        return resized_img
-    
+        return resized_img, new_height, new_width
+
     def load_model(self, param, local_files_only):
         torch_tensor_dtype = torch.float16 if param.cuda and torch.cuda.is_available() else torch.float32
         self.pipe = AutoPipelineForImage2Image.from_pretrained(
@@ -130,8 +121,7 @@ class InferKandinskyImg2img(dataprocess.C2dImageTask):
             self.seed = random.randint(0, 191965535)
         else:
             self.seed = seed
-
-        self.generator = torch.Generator(self.device).manual_seed(seed)
+        self.generator = torch.Generator(self.device).manual_seed(self.seed)
 
     def run(self):
         # Main function of your algorithm
@@ -154,15 +144,15 @@ class InferKandinskyImg2img(dataprocess.C2dImageTask):
 
         # Get image input
         input_image = self.get_input(0).get_image()
-        image_guide = self.convert_and_resize_img(input_image, param.height, param.width)
+        image_guide, height, width = self.convert_and_resize_img(input_image, param.height, param.width)
 
         with torch.no_grad():
             result = self.pipe(prompt=param.prompt,
                           negative_prompt=param.negative_prompt,
                           image=image_guide,
                           guidance_scale=param.guidance_scale,
-                          height=param.height,
-                          width=param.width,
+                          height=height,
+                          width=width,
                           generator=self.generator,
                           num_inference_steps = param.num_inference_steps,
                           strength= param.strength
@@ -211,7 +201,8 @@ class InferKandinskyImg2imgFactory(dataprocess.CTaskFactory):
         # URL of documentation
         self.info.documentation_link = "https://huggingface.co/kandinsky-community/kandinsky-2-2-decoder"
         # Code source repository
-        self.info.repository = "https://github.com/ai-forever/Kandinsky-2"
+        self.info.repository = "https://github.com/Ikomia-hub/infer_kandinsky_2_img2img"
+        self.info.original_repository = "https://github.com/ai-forever/Kandinsky-2"
         # Keywords used for search
         self.info.algo_type = core.AlgoType.INFER
         self.info.algo_tasks = "IMAGE_GENERATION"
