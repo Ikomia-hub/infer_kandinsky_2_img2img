@@ -144,7 +144,11 @@ class InferKandinskyImg2img(dataprocess.C2dImageTask):
 
         # Get image input
         input_image = self.get_input(0).get_image()
-        image_guide, height, width = self.convert_and_resize_img(input_image, param.height, param.width)
+        image_guide, height, width = self.convert_and_resize_img(
+                                                        input_image,
+                                                        param.height,
+                                                        param.width
+        )
 
         with torch.no_grad():
             result = self.pipe(prompt=param.prompt,
@@ -194,8 +198,8 @@ class InferKandinskyImg2imgFactory(dataprocess.CTaskFactory):
         self.info.version = "1.0.0"
         self.info.icon_path = "images/einstein.jpg"
         self.info.authors = "A. Shakhmatov, A. Razzhigaev, A. Nikolich, V. Arkhipkin, I. Pavlov, A. Kuznetsov, D. Dimitrov"
-        self.info.article = ""
-        self.info.journal = ""
+        self.info.article = "https://aclanthology.org/2023.emnlp-demo.25/"
+        self.info.journal = "ACL Anthology"
         self.info.year = 2023
         self.info.license = "Apache 2.0 License"
         # URL of documentation
