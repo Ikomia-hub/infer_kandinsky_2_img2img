@@ -27,7 +27,6 @@ class InferKandinsky2Img2imgParam(core.CWorkflowTaskParam):
         self.num_inference_steps = 100
         self.strength = 0.3
         self.seed = -1
-        self.enable_model_cpu_offload = False
         self.update = False
 
     def set_values(self, param_map):
@@ -44,7 +43,6 @@ class InferKandinsky2Img2imgParam(core.CWorkflowTaskParam):
         self.width = int(param_map["width"])
         self.num_inference_steps = int(param_map["num_inference_steps"])
         self.prior_num_inference_steps = int(param_map["prior_num_inference_steps"])
-        self.enable_model_cpu_offload = utils.strtobool(param_map["enable_model_cpu_offload"])
         self.strength = float(param_map["strength"])
         self.update = True
 
@@ -64,7 +62,6 @@ class InferKandinsky2Img2imgParam(core.CWorkflowTaskParam):
         param_map["prior_num_inference_steps"] = str(self.prior_num_inference_steps)
         param_map["strength"] = str(self.strength)
         param_map["seed"] = str(self.seed)
-        param_map["enable_model_cpu_offload"] = str(self.enable_model_cpu_offload)
 
         return param_map
 
