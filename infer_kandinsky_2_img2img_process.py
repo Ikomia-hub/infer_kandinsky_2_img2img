@@ -18,10 +18,12 @@ class InferKandinsky2Img2imgParam(core.CWorkflowTaskParam):
         self.model_name = "kandinsky-community/kandinsky-2-2-decoder"
         self.prompt = "A fantasy landscape, Cinematic lighting"
         self.cuda = torch.cuda.is_available()
+        self.prior_guidance_scale = 4.0
         self.guidance_scale = 1.0
         self.negative_prompt = "low quality, bad quality"
         self.height = 768
         self.width = 768
+        self.prior_num_inference_steps = 25
         self.num_inference_steps = 100
         self.strength = 0.3
         self.seed = -1
@@ -35,11 +37,13 @@ class InferKandinsky2Img2imgParam(core.CWorkflowTaskParam):
         self.prompt = str(param_map["prompt"])
         self.cuda = utils.strtobool(param_map["cuda"])
         self.guidance_scale = float(param_map["guidance_scale"])
+        self.prior_guidance_scale = float(param_map["prior_guidance_scale"])
         self.negative_prompt = str(param_map["negative_prompt"])
         self.seed = int(param_map["seed"])
         self.height = int(param_map["height"])
         self.width = int(param_map["width"])
         self.num_inference_steps = int(param_map["num_inference_steps"])
+        self.prior_num_inference_steps = int(param_map["prior_num_inference_steps"])
         self.enable_model_cpu_offload = utils.strtobool(param_map["enable_model_cpu_offload"])
         self.strength = float(param_map["strength"])
         self.update = True
@@ -50,12 +54,14 @@ class InferKandinsky2Img2imgParam(core.CWorkflowTaskParam):
         param_map = {}
         param_map["model_name"] = str(self.model_name)
         param_map["prompt"] = str(self.prompt)
+        param_map["negative_prompt"] = str(self.negative_prompt)
         param_map["cuda"] = str(self.cuda)
         param_map["guidance_scale"] = str(self.guidance_scale)
-        param_map["negative_prompt"] = str(self.negative_prompt)
+        param_map["prior_guidance_scale"] = str(self.prior_guidance_scale)
         param_map["height"] = str(self.height)
         param_map["width"] = str(self.width)
         param_map["num_inference_steps"] = str(self.num_inference_steps)
+        param_map["prior_num_inference_steps"] = str(self.prior_num_inference_steps)
         param_map["strength"] = str(self.strength)
         param_map["seed"] = str(self.seed)
         param_map["enable_model_cpu_offload"] = str(self.enable_model_cpu_offload)
@@ -154,12 +160,14 @@ class InferKandinskyImg2img(dataprocess.C2dImageTask):
             result = self.pipe(prompt=param.prompt,
                           negative_prompt=param.negative_prompt,
                           image=image_guide,
+                          prior_num_inference_steps=param.prior_num_inference_steps,
+                          prior_guidance_scale=param.prior_guidance_scale,
                           guidance_scale=param.guidance_scale,
                           height=height,
                           width=width,
                           generator=self.generator,
-                          num_inference_steps = param.num_inference_steps,
-                          strength= param.strength
+                          num_inference_steps=param.num_inference_steps,
+                          strength=param.strength
                           ).images[0]
 
         print(f"Prompt:\t{param.prompt}\nSeed:\t{self.seed}")
