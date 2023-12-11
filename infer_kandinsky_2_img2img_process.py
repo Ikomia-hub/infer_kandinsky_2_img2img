@@ -180,12 +180,6 @@ class InferKandinskyImg2img(dataprocess.C2dImageTask):
         # Call end_task_run() to finalize process
         self.end_task_run()
 
-        # Step progress bar (Ikomia Studio):
-        self.emit_step_progress()
-
-        # Call end_task_run() to finalize process
-        self.end_task_run()
-
 
 # --------------------
 # - Factory class to build process object
