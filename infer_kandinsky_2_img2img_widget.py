@@ -81,7 +81,7 @@ class InferKandinskyImg2imgWidget(core.CWorkflowTaskWidget):
                                                 self.grid_layout,
                                                 "Image height",
                                                 self.parameters.height,
-                                                min=128, max=1024, step=1
+                                                min=128, step=1
                                                 )
 
         # Number of inference steps
@@ -89,7 +89,7 @@ class InferKandinskyImg2imgWidget(core.CWorkflowTaskWidget):
                                                 self.grid_layout,
                                                 "Image width",
                                                 self.parameters.width,
-                                                min=128, max=1024, step=1
+                                                min=128, step=1
                                                 )
 
         # Negative prompt
