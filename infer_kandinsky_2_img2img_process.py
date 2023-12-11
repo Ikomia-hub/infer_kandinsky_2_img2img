@@ -75,8 +75,8 @@ class InferKandinskyImg2img(dataprocess.C2dImageTask):
     def __init__(self, name, param):
         dataprocess.C2dImageTask.__init__(self, name)
         # Add input/output of the algorithm here
-        self.add_input(dataprocess.CImageIO())
-
+        self.remove_input(1)
+        self.remove_output(1)
 
         # Create parameters object
         if param is None:
