@@ -1,7 +1,6 @@
 from ikomia import core, dataprocess
 from ikomia.utils import pyqtutils, qtconversion
 from infer_kandinsky_2_img2img.infer_kandinsky_2_img2img_process import InferKandinsky2Img2imgParam
-from torch.cuda import is_available
 
 # PyQt GUI framework
 from PyQt5.QtWidgets import *
@@ -25,12 +24,6 @@ class InferKandinskyImg2imgWidget(core.CWorkflowTaskWidget):
         self.grid_layout = QGridLayout()
         # PyQt -> Qt wrapping
         layout_ptr = qtconversion.PyQtToQt(self.grid_layout)
-
-        # Cuda
-        self.check_cuda = pyqtutils.append_check(self.grid_layout,
-                                                 "Cuda",
-                                                 self.parameters.cuda and is_available())
-        self.check_cuda.setEnabled(is_available())
 
         # Model name
         self.combo_model = pyqtutils.append_edit(self.grid_layout, "Model name", self.parameters.model_name)
@@ -76,7 +69,7 @@ class InferKandinskyImg2imgWidget(core.CWorkflowTaskWidget):
                                                         min=0, step=0.1, decimals=1
                                                     )
 
-        # Image output size
+        # Image height
         self.spin_height = pyqtutils.append_spin(
                                                 self.grid_layout,
                                                 "Image height",
@@ -84,7 +77,7 @@ class InferKandinskyImg2imgWidget(core.CWorkflowTaskWidget):
                                                 min=128, step=1
                                                 )
 
-        # Number of inference steps
+        # Image width
         self.spin_width = pyqtutils.append_spin(
                                                 self.grid_layout,
                                                 "Image width",
@@ -92,14 +85,20 @@ class InferKandinskyImg2imgWidget(core.CWorkflowTaskWidget):
                                                 min=128, step=1
                                                 )
 
-        # Negative prompt
+        # Strenght
         self.spin_strength = pyqtutils.append_double_spin(
                                                     self.grid_layout,
                                                     "Strenght",
                                                     self.parameters.strength,
                                                     min=0, step=0.1, decimals=1
-
                                                     )
+        # Seed
+        self.spin_seed = pyqtutils.append_spin(
+                                            self.grid_layout,
+                                            "Seed",
+                                            self.parameters.seed,
+                                            min=-1, step=1
+                                            )
 
        # Set widget layout
         self.set_layout(layout_ptr)
@@ -119,8 +118,7 @@ class InferKandinskyImg2imgWidget(core.CWorkflowTaskWidget):
         self.parameters.height = self.spin_height.value()
         self.parameters.strength = self.spin_strength.value()
         self.parameters.negative_prompt = self.edit_negative_prompt.text()
-        self.parameters.cuda = self.check_cuda.isChecked()
-
+        self.parameters.seed = self.spin_seed.value()
 
 # --------------------
 # - Factory class to build algorithm widget object
