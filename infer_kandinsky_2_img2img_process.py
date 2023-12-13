@@ -107,7 +107,7 @@ class InferKandinskyImg2img(dataprocess.C2dImageTask):
         return resized_img, new_height, new_width
 
     def load_model(self, param, local_files_only):
-        torch_tensor_dtype = torch.float16 if param.cuda and torch.cuda.is_available() else torch.float32
+        torch_tensor_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
         self.pipe = AutoPipelineForImage2Image.from_pretrained(
             param.model_name,
             torch_dtype=torch_tensor_dtype,
@@ -136,7 +136,7 @@ class InferKandinskyImg2img(dataprocess.C2dImageTask):
 
         # Load pipeline
         if param.update or self.pipe is None:
-            self.device = torch.device("cuda") if param.cuda and torch.cuda.is_available() else torch.device("cpu")
+            self.device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
             try:
                 self.load_model(param, local_files_only=True)
