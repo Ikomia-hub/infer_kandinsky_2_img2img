@@ -52,7 +52,7 @@ wf = Workflow()
 algo = wf.add_task(name = "infer_kandinsky_2_img2img", auto_connect=False)
 
 # Run directly on your image
-wf.run()
+wf.run_on(url="https://raw.githubusercontent.com/CompVis/stable-diffusion/main/assets/stable-samples/img2img/sketch-mountains-input.jpg")
 
 # Display the image
 display(algo.get_output(0).get_image())
