@@ -3,6 +3,6 @@
 torch==1.13.1+cu116
 torchvision==0.14.1+cu116
 
-diffusers>=0.15.1, <1.0
+diffusers>=0.20.0, <1.0
 transformers>=4.25
-accelerate>=0.18.0, <1.0
+accelerate>=0.21.0, <1.0
